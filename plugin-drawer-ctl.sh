@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Move bar widgets in and out of the drawer by editing shell.json.
 #
-#   drawer-ctl.sh stash   <widget-id> [--keep-enabled]
-#   drawer-ctl.sh restore <widget-id>
+#   plugin-drawer-ctl.sh stash   <widget-id> [--keep-enabled]
+#   plugin-drawer-ctl.sh restore <widget-id>
 #
 # `stash` takes the widget's entry out of bar.layout and parks it, settings
 # and all, in the drawer's own `items` list, remembering where it came from
@@ -17,13 +17,13 @@
 # directly with one atomic replace, the same way the shell persists it.
 set -euo pipefail
 
-self="io.github.mario4810.drawer"
+self="io.github.mario4810.plugin-drawer"
 config="${OMARCHY_SHELL_JSON:-$HOME/.config/omarchy/shell.json}"
 # The bar rebuilds every widget when its layout changes, which takes the open
 # drawer with it. The drawer looks for this flag when it comes back up.
-reopen_flag="${OMARCHY_DRAWER_REOPEN:-${XDG_RUNTIME_DIR:-/tmp}/omarchy-drawer-reopen}"
+reopen_flag="${OMARCHY_PLUGIN_DRAWER_REOPEN:-${XDG_RUNTIME_DIR:-/tmp}/omarchy-plugin-drawer-reopen}"
 
-die() { echo "drawer-ctl: $*" >&2; exit 1; }
+die() { echo "plugin-drawer-ctl: $*" >&2; exit 1; }
 
 edit() { # <jq args...>
   local tmp
@@ -87,7 +87,7 @@ restore() {
 command -v jq > /dev/null || die "jq is required"
 
 action="${1:-}"; id="${2:-}"
-[[ -n $id ]] || die "usage: drawer-ctl.sh stash|restore <widget-id> [--keep-enabled]"
+[[ -n $id ]] || die "usage: plugin-drawer-ctl.sh stash|restore <widget-id> [--keep-enabled]"
 [[ $id != "$self" ]] || die "the drawer cannot hold itself"
 
 case "$action" in

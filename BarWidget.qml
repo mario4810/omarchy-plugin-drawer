@@ -3,16 +3,16 @@ import Quickshell
 import Quickshell.Io
 import qs.Commons
 import qs.Ui
-import "DrawerModel.js" as DrawerModel
+import "PluginDrawerModel.js" as PluginDrawerModel
 
 // The bar-side half of the drawer: a single icon button that opens the drawer
-// (Drawer.qml) holding the widgets that were moved out of the bar.
+// (PluginDrawer.qml) holding the widgets that were moved out of the bar.
 BarWidget {
   id: root
-  moduleName: "io.github.mario4810.drawer"
+  moduleName: "io.github.mario4810.plugin-drawer"
 
   // The interface the shell looks for when routing
-  // `omarchy-shell shell toggle io.github.mario4810.drawer` to a bar widget,
+  // `omarchy-shell shell toggle io.github.mario4810.plugin-drawer` to a bar widget,
   // so the drawer can be bound to a key.
   readonly property bool opened: drawer.open
   function open() { drawer.show() }
@@ -27,14 +27,14 @@ BarWidget {
     anchors.fill: parent
     bar: root.bar
     text: setting("icon", "󰇘")
-    tooltipText: "Drawer"
+    tooltipText: "Plugin Drawer"
     active: drawer.open
     onPressed: function(mouseButton) { root.toggle() }
   }
 
   // What the drawer holds lives inline on this widget's own entry in
   // shell.json, next to its other settings.
-  Drawer {
+  PluginDrawer {
     id: drawer
     anchorItem: button
     bar: root.bar
@@ -54,10 +54,10 @@ BarWidget {
 
   function refresh() {
     var layout = bar ? bar.layoutConfig : {}
-    var nextItems = DrawerModel.drawerItems(setting("items", []), catalog, layout)
+    var nextItems = PluginDrawerModel.drawerItems(setting("items", []), catalog, layout)
     var itemsJson = JSON.stringify(nextItems)
     if (itemsJson !== itemsKey) { itemsKey = itemsJson; items = nextItems }
-    var nextMovable = DrawerModel.movable(layout, catalog, moduleName)
+    var nextMovable = PluginDrawerModel.movable(layout, catalog, moduleName)
     var movableJson = JSON.stringify(nextMovable)
     if (movableJson !== movableKey) { movableKey = movableJson; movable = nextMovable }
   }
@@ -87,7 +87,7 @@ BarWidget {
     stdout: StdioCollector {
       onStreamFinished: {
         try { root.catalog = JSON.parse(text) }
-        catch (e) { console.warn("drawer: could not read plugin list:", e) }
+        catch (e) { console.warn("plugin-drawer: could not read plugin list:", e) }
       }
     }
   }
@@ -97,12 +97,12 @@ BarWidget {
     function onOpenChanged() { if (drawer.open && !scan.running) scan.running = true }
   }
 
-  // Moving a widget rebuilds the bar and this widget with it. drawer-ctl
+  // Moving a widget rebuilds the bar and this widget with it. plugin-drawer-ctl
   // leaves a short-lived flag behind; if it is there, pick up where the last
   // instance left off with the edit view open.
   Process {
     id: reopen
-    command: ["bash", "-c", 'f="${XDG_RUNTIME_DIR:-/tmp}/omarchy-drawer-reopen"; '
+    command: ["bash", "-c", 'f="${XDG_RUNTIME_DIR:-/tmp}/omarchy-plugin-drawer-reopen"; '
       + '[ -e "$f" ] && [ $(( $(date +%s) - $(stat -c %Y "$f") )) -lt 15 ] && echo yes; rm -f "$f"']
     stdout: StdioCollector {
       onStreamFinished: if (text.trim() === "yes") { drawer.manage = true; drawer.show() }

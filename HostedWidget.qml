@@ -5,7 +5,7 @@ import QtQuick
 Loader {
   id: root
 
-  // { id, url, settings } from DrawerModel.drawerItems
+  // { id, url, settings } from PluginDrawerModel.drawerItems
   required property var entry
   required property QtObject bar
 

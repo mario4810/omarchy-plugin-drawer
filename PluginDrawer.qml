@@ -20,10 +20,10 @@ Scope {
 
   required property Item anchorItem
   required property QtObject bar
-  // Directory holding drawer-ctl.sh.
+  // Directory holding plugin-drawer-ctl.sh.
   property string scriptDir: ""
-  // What the drawer holds (DrawerModel.drawerItems) and what could join it
-  // (DrawerModel.movable).
+  // What the drawer holds (PluginDrawerModel.drawerItems) and what could join it
+  // (PluginDrawerModel.movable).
   property var items: []
   property var movable: []
 
@@ -67,7 +67,7 @@ Scope {
   }
 
   // Moves a widget in or out. Both end in a layout change, which makes the bar
-  // rebuild itself, this drawer included; drawer-ctl leaves a flag so the new
+  // rebuild itself, this drawer included; plugin-drawer-ctl leaves a flag so the new
   // instance reopens where this one left off.
   Process {
     id: ctl
@@ -84,7 +84,7 @@ Scope {
     if (ctl.running) return
     ctl.errorText = ""
     ctl.busyId = id
-    ctl.command = ["bash", scriptDir + "/drawer-ctl.sh"].concat(args)
+    ctl.command = ["bash", scriptDir + "/plugin-drawer-ctl.sh"].concat(args)
     ctl.running = true
   }
 
@@ -96,7 +96,7 @@ Scope {
     visible: root.open
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "omarchy-drawer-dismiss"
+    WlrLayershell.namespace: "omarchy-plugin-drawer-dismiss"
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     anchors { top: true; bottom: true; left: true; right: true }
@@ -133,7 +133,7 @@ Scope {
     visible: root.open
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "omarchy-drawer"
+    WlrLayershell.namespace: "omarchy-plugin-drawer"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 

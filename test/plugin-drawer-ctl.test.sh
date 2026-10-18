@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Exercises drawer-ctl.sh against a scratch shell.json; never touches the real one.
+# Exercises plugin-drawer-ctl.sh against a scratch shell.json; never touches the real one.
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ctl="$here/../drawer-ctl.sh"
+ctl="$here/../plugin-drawer-ctl.sh"
 work="$(mktemp -d)"; trap 'rm -rf "$work"' EXIT
 
 export OMARCHY_SHELL_JSON="$work/shell.json"
-export OMARCHY_DRAWER_REOPEN="$work/reopen"
-self="io.github.mario4810.drawer"
+export OMARCHY_PLUGIN_DRAWER_REOPEN="$work/reopen"
+self="io.github.mario4810.plugin-drawer"
 
 fresh() {
   cat > "$OMARCHY_SHELL_JSON" <<JSON
@@ -29,7 +29,7 @@ fresh() {
 }
 JSON
   cp "$OMARCHY_SHELL_JSON" "$work/original.json"
-  rm -f "$OMARCHY_DRAWER_REOPEN"
+  rm -f "$OMARCHY_PLUGIN_DRAWER_REOPEN"
 }
 
 fails=0
@@ -48,7 +48,7 @@ check "stash removes the widget from the bar" '[.bar.layout[][].id] | index("b.t
 check "stash keeps its settings in the drawer" '[.bar.layout.right[] | select(.id == "'"$self"'")][0].items == [{"id":"b.two","showPercentage":false}]'
 check "stash remembers the old neighbour" '[.bar.layout.right[] | select(.id == "'"$self"'")][0].origins["b.two"] == {"section":"right","after":"a.one"}'
 check "stash leaves plugins alone by default" '.plugins == [{"id":"shell.settings"}]'
-[[ -e $OMARCHY_DRAWER_REOPEN ]] && echo "ok   stash flags the drawer to reopen" || { echo "FAIL reopen flag"; fails=$((fails + 1)); }
+[[ -e $OMARCHY_PLUGIN_DRAWER_REOPEN ]] && echo "ok   stash flags the drawer to reopen" || { echo "FAIL reopen flag"; fails=$((fails + 1)); }
 
 "$ctl" restore b.two
 if diff <(jq -S . "$work/original.json") <(jq -S . "$OMARCHY_SHELL_JSON") > /dev/null; then

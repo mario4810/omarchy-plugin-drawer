@@ -1,4 +1,4 @@
-# Drawer
+# Plugin Drawer
 
 An [Omarchy](https://omarchy.org/) shell plugin that gives a busy bar some
 room. It adds **one button** to the bar. Clicking it opens a small drawer under
@@ -11,15 +11,15 @@ would on the bar.
 ## Install
 
 ```sh
-omarchy plugin add https://github.com/mario4810/omarchy-drawer --enable --yes
+omarchy plugin add https://github.com/mario4810/omarchy-plugin-drawer --enable --yes
 ```
 
 Or by hand:
 
 ```sh
-git clone https://github.com/mario4810/omarchy-drawer ~/.config/omarchy/plugins/io.github.mario4810.drawer
+git clone https://github.com/mario4810/omarchy-plugin-drawer ~/.config/omarchy/plugins/io.github.mario4810.plugin-drawer
 omarchy-shell shell rescanPlugins
-omarchy plugin enable io.github.mario4810.drawer
+omarchy plugin enable io.github.mario4810.plugin-drawer
 ```
 
 Move the button where you want it with `omarchy bar move`, or drag it on the
@@ -43,7 +43,7 @@ move a widget. The drawer reopens by itself in the edit view afterwards.
 To open it from a key binding:
 
 ```sh
-omarchy-shell shell toggle io.github.mario4810.drawer
+omarchy-shell shell toggle io.github.mario4810.plugin-drawer
 ```
 
 Works with a horizontal or a vertical bar; on a vertical bar the drawer is a column.
@@ -104,22 +104,22 @@ itself, giving it the same `bar`, `moduleName` and `settings` a slot would.
 
 - `BarWidget.qml`: the bar button. Keeps the plugin list and what could be
   moved, and asks for a rescan whenever the drawer opens.
-- `Drawer.qml`: the card and its two windows. Hosted widgets open popups that
+- `PluginDrawer.qml`: the card and its two windows. Hosted widgets open popups that
   position themselves from the height of their own window, expecting the bar.
   So the card window reaches from the screen edge to just past the card, and
   those popups land right beyond it.
 - `HostedWidget.qml`, `ManageList.qml`: one loaded widget, and the edit lists.
-- `DrawerModel.js`: what the drawer holds, and what can be moved into it.
+- `PluginDrawerModel.js`: what the drawer holds, and what can be moved into it.
 - `scan-plugins.sh`: finds bar-widget plugins the way the shell does.
-- `drawer-ctl.sh`: moves a widget in or out by editing `shell.json` with one
+- `plugin-drawer-ctl.sh`: moves a widget in or out by editing `shell.json` with one
   atomic replace. The shell does not let a bar widget change the layout, only
   full-bar plugins can.
 
 ## Development
 
 ```sh
-./test/drawer-ctl.test.sh       # layout edits against a scratch shell.json
-node test/drawer-model.test.js  # model helpers
+./test/plugin-drawer-ctl.test.sh        # layout edits against a scratch shell.json
+node test/plugin-drawer-model.test.js  # model helpers
 omarchy plugin validate .
 ```
 

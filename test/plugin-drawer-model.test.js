@@ -1,10 +1,10 @@
-// Run with: node test/drawer-model.test.js
+// Run with: node test/plugin-drawer-model.test.js
 const fs = require("fs")
 const path = require("path")
 const assert = require("assert")
 
-// Qt loads DrawerModel.js as a QML library; node needs the pragma line gone.
-const source = fs.readFileSync(path.join(__dirname, "..", "DrawerModel.js"), "utf8")
+// Qt loads PluginDrawerModel.js as a QML library; node needs the pragma line gone.
+const source = fs.readFileSync(path.join(__dirname, "..", "PluginDrawerModel.js"), "utf8")
   .replace(/^\.pragma library\s*$/m, "")
 const M = new Function(source + "; return { drawerItems, movable, needsKeepEnabled }")()
 

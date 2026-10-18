@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "io.github.mario4810.drawer",
-  "name": "Drawer",
+  "id": "io.github.mario4810.plugin-drawer",
+  "name": "Plugin Drawer",
   "version": "0.1.0",
   "author": "mario4810",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "barWidget": "BarWidget.qml"
   },
   "barWidget": {
-    "displayName": "Drawer",
+    "displayName": "Plugin Drawer",
     "description": "Button that opens a drawer of stashed bar widgets",
     "category": "Status",
     "defaultSection": "right",
