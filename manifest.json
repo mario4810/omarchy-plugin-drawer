@@ -2,9 +2,10 @@
   "schemaVersion": 1,
   "id": "io.github.mario4810.plugin-drawer",
   "name": "Plugin Drawer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "mario4810",
   "license": "MIT",
+  "homepage": "https://github.com/mario4810/omarchy-plugin-drawer",
   "description": "One bar button that opens a small drawer holding the bar widgets you moved out of the bar.",
   "kinds": ["bar-widget"],
   "entryPoints": {

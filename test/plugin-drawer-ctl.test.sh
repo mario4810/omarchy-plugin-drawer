@@ -81,6 +81,17 @@ fresh
 check "a lone center widget returns to the center" '.bar.layout.center == [{"id":"omarchy.clock","format":"HH:mm"}]'
 
 fresh
+"$ctl" stash a.one --keep-enabled
+"$ctl" stash b.two
+"$ctl" restore-all
+if diff <(jq -S . "$work/original.json") <(jq -S . "$OMARCHY_SHELL_JSON") > /dev/null; then
+  echo "ok   restore-all empties the drawer back into the original config"
+else echo "FAIL restore-all is not the inverse of the stashes"; fails=$((fails + 1)); fi
+[[ ! -e $OMARCHY_PLUGIN_DRAWER_REOPEN ]] && echo "ok   restore-all leaves no reopen flag" || { echo "FAIL restore-all left the reopen flag"; fails=$((fails + 1)); }
+"$ctl" restore-all
+check "restore-all on an empty drawer changes nothing" '.bar.layout.right | map(.id) == ["a.one","b.two","c.three","'"$self"'"]'
+
+fresh
 fails_with "stashing something not in the bar fails" "$ctl" stash nope.missing
 fails_with "restoring something not in the drawer fails" "$ctl" restore a.one
 fails_with "the drawer cannot stash itself" "$ctl" stash "$self"

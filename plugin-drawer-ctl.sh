@@ -3,6 +3,7 @@
 #
 #   plugin-drawer-ctl.sh stash   <widget-id> [--keep-enabled]
 #   plugin-drawer-ctl.sh restore <widget-id>
+#   plugin-drawer-ctl.sh restore-all
 #
 # `stash` takes the widget's entry out of bar.layout and parks it, settings
 # and all, in the drawer's own `items` list, remembering where it came from
@@ -10,7 +11,8 @@
 # --keep-enabled the plugin id is also listed in `plugins[]` (unless it
 # already was), which is how the shell keeps a plugin that has a service or
 # panel loaded once it has no bar slot. `restore` removes only an entry that
-# `stash` added.
+# `stash` added. `restore-all` empties the drawer, which is what to run
+# before removing the plugin.
 #
 # The shell only reads shell.json and the bar widget cannot write it (only
 # full-bar plugins get a config mutator), so this script edits the file
@@ -83,11 +85,24 @@ restore() {
     | if $origin.plugin == true then .plugins |= map(select(.id != $id)) else . end'
 }
 
+restore_all() {
+  local id
+  # Newest first: each stash recorded its neighbour as the bar stood then,
+  # so undoing them in reverse gives back the exact original order.
+  jq -r --arg self "$self" '
+    [.bar.layout // {} | .[][] | select(.id == $self)] | first // {}
+    | (.items // []) | reverse[].id' "$config" |
+    while IFS= read -r id; do restore "$id"; done
+  # Nothing is left to reopen; this usually runs on the way out.
+  rm -f "$reopen_flag"
+}
+
 [[ -f $config ]] || die "no shell config at $config"
 command -v jq > /dev/null || die "jq is required"
 
 action="${1:-}"; id="${2:-}"
-[[ -n $id ]] || die "usage: plugin-drawer-ctl.sh stash|restore <widget-id> [--keep-enabled]"
+if [[ $action == restore-all ]]; then restore_all; exit; fi
+[[ -n $id ]] || die "usage: plugin-drawer-ctl.sh stash|restore <widget-id> [--keep-enabled] | restore-all"
 [[ $id != "$self" ]] || die "the drawer cannot hold itself"
 
 case "$action" in

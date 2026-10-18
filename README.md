@@ -8,6 +8,11 @@ The widgets in the drawer are the real thing: they show their live state and
 open their own popups (a calendar, a device list, a GitHub feed) just as they
 would on the bar.
 
+## Requirements
+
+- Omarchy 4 (the Quickshell-based `omarchy-shell`)
+- `bash` and `jq`, both part of a standard Omarchy install
+
 ## Install
 
 ```sh
@@ -24,6 +29,53 @@ omarchy plugin enable io.github.mario4810.plugin-drawer
 
 Move the button where you want it with `omarchy bar move`, or drag it on the
 bar.
+
+## Update
+
+```sh
+omarchy plugin update io.github.mario4810.plugin-drawer
+```
+
+It shows the diff and fast-forwards the checkout. Run `omarchy restart shell`
+afterwards: the shell reloads `BarWidget.qml` by itself, but not the files it
+uses.
+
+## Remove
+
+Empty the drawer first. Widgets in the drawer are not in the bar layout, so
+removing the plugin while it holds some takes them off the bar too.
+
+```sh
+~/.config/omarchy/plugins/io.github.mario4810.plugin-drawer/plugin-drawer-ctl.sh restore-all
+omarchy plugin remove io.github.mario4810.plugin-drawer --yes
+```
+
+`restore-all` puts every widget back where it came from, with its settings,
+and drops the `plugins[]` entries the drawer added to keep some of them
+running. Clicking each row under **In the drawer** in the edit view does the
+same thing one widget at a time.
+
+`omarchy plugin disable io.github.mario4810.plugin-drawer` takes the button
+off the bar but keeps the plugin installed; empty the drawer before that too.
+
+If you removed it with widgets still inside, put them back by hand
+(`omarchy plugin list` shows the ids):
+
+```sh
+omarchy bar put <widget-id> --section right
+```
+
+### Coming from `io.github.mario4810.drawer`
+
+Versions before 0.2.0 used the id `io.github.mario4810.drawer` and the repo
+`omarchy-drawer`. The id is also the install folder, so `omarchy plugin update`
+cannot move an old install over. Empty the old drawer through its edit view,
+then:
+
+```sh
+omarchy plugin remove io.github.mario4810.drawer --yes
+omarchy plugin add https://github.com/mario4810/omarchy-plugin-drawer --enable --yes
+```
 
 ## Using it
 
@@ -82,19 +134,6 @@ Things to know:
 - **The widgets run in your shell**, as they always did; the drawer just loads
   their code by path, the way the bar does.
 
-## If widgets go missing
-
-Widgets in the drawer are not in `bar.layout`, so they are not on the bar. If
-you disable or remove the drawer while it holds some, they disappear from the
-bar. Put one back with:
-
-```sh
-omarchy bar put <widget-id> --section right
-```
-
-`omarchy plugin list` shows the ids. Moving widgets out through the drawer's
-edit view avoids this altogether.
-
 ## How it works
 
 The bar only hands a plugin's widget component to its own slots, and a widget
@@ -111,8 +150,8 @@ itself, giving it the same `bar`, `moduleName` and `settings` a slot would.
 - `HostedWidget.qml`, `ManageList.qml`: one loaded widget, and the edit lists.
 - `PluginDrawerModel.js`: what the drawer holds, and what can be moved into it.
 - `scan-plugins.sh`: finds bar-widget plugins the way the shell does.
-- `plugin-drawer-ctl.sh`: moves a widget in or out by editing `shell.json` with one
-  atomic replace. The shell does not let a bar widget change the layout, only
+- `plugin-drawer-ctl.sh`: moves a widget in or out (or empties the drawer with
+  `restore-all`) by editing `shell.json` with one atomic replace. The shell does not let a bar widget change the layout, only
   full-bar plugins can.
 
 ## Development
