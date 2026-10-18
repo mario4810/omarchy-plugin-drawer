@@ -1,5 +1,7 @@
 # Plugin Drawer
 
+![The drawer open under its bar button](preview.png)
+
 An [Omarchy](https://omarchy.org/) shell plugin that gives a busy bar some
 room. It adds **one button** to the bar. Clicking it opens a small drawer under
 the button, and the drawer holds the bar widgets you moved out of the bar.
